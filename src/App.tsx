@@ -1,25 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import Services from "./components/Services";
+import QualityServices from "./components/QualityServices";
+import Contact from "./components/Contact";
+import Footer from "./components/Footer";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Poppins", "Arial", sans-serif',
+  },
+  palette: {
+    primary: {
+      main: "#1db85c",
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="App">
+          <Navbar />
+          <main>
+            <Hero />
+            <QualityServices />
+            <Services />
+            <Contact />
+          </main>
+          <Footer />
+        </div>
+      </ThemeProvider>
+    </Router>
   );
 }
 
