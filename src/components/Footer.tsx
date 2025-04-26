@@ -26,9 +26,9 @@ const Footer: React.FC = () => {
                 }}
               >
                 <Box component="span" sx={{ color: "#1db85c" }}>
-                  Pro
+                  green
                 </Box>
-                Cleaning
+                Clean
               </Typography>
             </Box>
             <Typography
@@ -231,7 +231,7 @@ const Footer: React.FC = () => {
             variant="body2"
             sx={{ color: "#B3B3B3", fontSize: "0.875rem" }}
           >
-            2024 "Procleaning" All Rights Received
+            2024 "greenClean" All Rights Reserved
           </Typography>
         </Box>
       </Container>

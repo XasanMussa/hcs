@@ -74,6 +74,7 @@ const Services: React.FC = () => {
 
   return (
     <Box
+      id="services"
       sx={{
         py: 6,
         backgroundColor: "#1db85c",

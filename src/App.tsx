@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import Navbar from "./components/Navbar";
@@ -8,6 +8,10 @@ import Services from "./components/Services";
 import QualityServices from "./components/QualityServices";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
+import { AuthProvider } from "./contexts/AuthContext";
+import Terms from "./components/Terms";
 
 const theme = createTheme({
   typography: {
@@ -22,21 +26,35 @@ const theme = createTheme({
 
 function App() {
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className="App">
-          <Navbar />
-          <main>
-            <Hero />
-            <QualityServices />
-            <Services />
-            <Contact />
-          </main>
-          <Footer />
-        </div>
-      </ThemeProvider>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div className="App">
+            <Navbar />
+            <main>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <Hero />
+                      <QualityServices />
+                      <Services />
+                      <Contact />
+                    </>
+                  }
+                />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/terms" element={<Terms />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
+      </Router>
+    </AuthProvider>
   );
 }
 

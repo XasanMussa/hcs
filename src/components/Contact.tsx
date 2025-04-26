@@ -1,4 +1,5 @@
 import React from "react";
+import Map from "./Map";
 import {
   Container,
   Typography,
@@ -7,6 +8,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const PhoneIcon = () => (
   <svg
@@ -54,8 +56,14 @@ const LocationIcon = () => (
 );
 
 const Contact: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleBookNow = () => {
+    navigate("/book-now");
+  };
+
   return (
-    <Box sx={{ py: 8, backgroundColor: "#fff" }}>
+    <Box id="contact" sx={{ py: 8, backgroundColor: "#fff" }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* Left Column - Contact Info */}
@@ -199,11 +207,31 @@ const Contact: React.FC = () => {
                       variant="body1"
                       sx={{ color: "#666", fontSize: "0.9rem" }}
                     >
-                      7510, Brand Tower, New York, USA
+                      Hodan District, Taleex, Mogadishu, Somalia
                     </Typography>
                   </Box>
                 </Box>
               </Box>
+
+              {/* Add Book Now Button */}
+              <Button
+                variant="contained"
+                onClick={handleBookNow}
+                sx={{
+                  backgroundColor: "#1db85c",
+                  "&:hover": {
+                    backgroundColor: "#169c4b",
+                  },
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  py: 1.5,
+                  width: "fit-content",
+                  px: 4,
+                  mt: 4,
+                }}
+              >
+                Book Now
+              </Button>
             </Box>
           </Grid>
 
@@ -296,6 +324,7 @@ const Contact: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+      <Map />
     </Box>
   );
 };

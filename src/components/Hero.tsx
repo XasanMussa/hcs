@@ -5,6 +5,7 @@ import heroImage from "../images/hero-image.png";
 const Hero: React.FC = () => {
   return (
     <Box
+      id="home"
       sx={{
         minHeight: "85vh",
         display: "flex",
@@ -54,22 +55,6 @@ const Hero: React.FC = () => {
                 time, energy, and money.
               </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "#1db85c",
-                    "&:hover": {
-                      backgroundColor: "#169c4b",
-                    },
-                    textTransform: "none",
-                    fontSize: "1rem",
-                    px: 3,
-                    py: 1,
-                  }}
-                >
-                  Get Start Now
-                </Button>
                 <Button
                   variant="outlined"
                   size="large"

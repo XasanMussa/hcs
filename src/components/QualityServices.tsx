@@ -1,11 +1,11 @@
 import React from "react";
-import { Container, Typography, Button, Box, Grid } from "@mui/material";
+import { Container, Typography, Box, Grid } from "@mui/material";
 import qualityImage1 from "../images/quality-1.png";
 import qualityImage2 from "../images/quality-2.png";
 
 const QualityServices: React.FC = () => {
   return (
-    <Box sx={{ py: 8, backgroundColor: "#fff" }}>
+    <Box id="about" sx={{ py: 8, backgroundColor: "#fff" }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} alignItems="center">
           {/* Left Column - Text Content */}
@@ -42,21 +42,6 @@ const QualityServices: React.FC = () => {
               We provide comprehensive cleaning services tailored to your needs.
               From residential cleaning services
             </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "#1db85c",
-                "&:hover": {
-                  backgroundColor: "#169c4b",
-                },
-                textTransform: "none",
-                px: 4,
-                py: 1.5,
-              }}
-            >
-              Get a quote
-            </Button>
           </Grid>
 
           {/* Right Column - Images */}
