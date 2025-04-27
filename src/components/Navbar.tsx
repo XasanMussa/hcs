@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { AppBar, Toolbar, Button, Typography, Box } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const useScrollToSection = () => {
   const navigate = useNavigate();
@@ -29,8 +29,15 @@ const useScrollToSection = () => {
 };
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const scrollToSection = useScrollToSection();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <AppBar
       position="fixed"
@@ -73,7 +80,26 @@ const Navbar: React.FC = () => {
           >
             Contact
           </Button>
-          {!user ? (
+
+          {user ? (
+            <>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/my-bookings"
+                sx={{ color: "#333", ml: 2 }}
+              >
+                My Bookings
+              </Button>
+              <Button
+                color="inherit"
+                onClick={handleSignOut}
+                sx={{ color: "#333", ml: 2 }}
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
             <>
               <Button
                 color="inherit"
@@ -98,14 +124,6 @@ const Navbar: React.FC = () => {
                 Sign Up
               </Button>
             </>
-          ) : (
-            <Button
-              color="inherit"
-              onClick={logout}
-              sx={{ color: "#333", ml: 2 }}
-            >
-              Log Out
-            </Button>
           )}
         </Box>
       </Toolbar>

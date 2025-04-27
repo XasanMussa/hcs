@@ -1,5 +1,8 @@
 {
   "mcpServers": {
+    "firecrawl": {
+      "command": "cmd /c set FIRECRAWL_API_KEY=fc-ea892f48f2934a9d907562530fd6f7cd && npx -y firecrawl-mcp"
+    },
     "supabase": {
       "command": "cmd",
       "args": [

@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import Map from "./Map";
 import {
   Container,
@@ -7,8 +7,19 @@ import {
   Grid,
   TextField,
   Button,
+  Alert,
+  Snackbar,
+  CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import emailjs from "@emailjs/browser";
+
+// EmailJS configuration
+const EMAILJS_SERVICE_ID = "service_3vf8icv";
+const EMAILJS_TEMPLATE_ID = "template_wagen33";
+const EMAILJS_PUBLIC_KEY = "AeyTbKxmCkYOHBy9N";
+
+// Initialize EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
 const PhoneIcon = () => (
   <svg
@@ -56,10 +67,75 @@ const LocationIcon = () => (
 );
 
 const Contact: React.FC = () => {
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
 
-  const handleBookNow = () => {
-    navigate("/book-now");
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        time: new Date().toLocaleString(),
+        reply_to: formData.email,
+      };
+
+      const response = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log("Email sent successfully:", response);
+
+      setSnackbar({
+        open: true,
+        message: "Message sent successfully!",
+        severity: "success",
+      });
+
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Email error:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to send message. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -212,26 +288,6 @@ const Contact: React.FC = () => {
                   </Box>
                 </Box>
               </Box>
-
-              {/* Add Book Now Button */}
-              <Button
-                variant="contained"
-                onClick={handleBookNow}
-                sx={{
-                  backgroundColor: "#1db85c",
-                  "&:hover": {
-                    backgroundColor: "#169c4b",
-                  },
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  py: 1.5,
-                  width: "fit-content",
-                  px: 4,
-                  mt: 4,
-                }}
-              >
-                Book Now
-              </Button>
             </Box>
           </Grid>
 
@@ -239,6 +295,7 @@ const Contact: React.FC = () => {
           <Grid item xs={12} md={7}>
             <Box
               component="form"
+              onSubmit={handleSubmit}
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -247,8 +304,12 @@ const Contact: React.FC = () => {
             >
               <TextField
                 fullWidth
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
                 placeholder="Name"
                 variant="outlined"
+                required
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#f8f8f8",
@@ -266,8 +327,13 @@ const Contact: React.FC = () => {
               />
               <TextField
                 fullWidth
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="Email"
                 variant="outlined"
+                required
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#f8f8f8",
@@ -285,10 +351,14 @@ const Contact: React.FC = () => {
               />
               <TextField
                 fullWidth
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
                 placeholder="Message"
                 multiline
                 rows={4}
                 variant="outlined"
+                required
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#f8f8f8",
@@ -305,7 +375,9 @@ const Contact: React.FC = () => {
                 }}
               />
               <Button
+                type="submit"
                 variant="contained"
+                disabled={loading}
                 sx={{
                   backgroundColor: "#1db85c",
                   "&:hover": {
@@ -318,13 +390,32 @@ const Contact: React.FC = () => {
                   px: 4,
                 }}
               >
-                Sent Message
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Send Message"
+                )}
               </Button>
             </Box>
           </Grid>
         </Grid>
       </Container>
       <Map />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

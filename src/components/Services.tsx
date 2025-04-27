@@ -8,6 +8,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 interface PricingPlan {
   title: string;
@@ -20,7 +22,7 @@ interface PricingPlan {
 const pricingPlans: PricingPlan[] = [
   {
     title: "BASIC PACKAGE",
-    price: "59.00",
+    price: "0.01",
     period: "Monthly",
     features: [
       "Dusting of all surfaces",
@@ -62,6 +64,8 @@ const pricingPlans: PricingPlan[] = [
 
 const Services: React.FC = () => {
   const [billingPeriod, setBillingPeriod] = useState<string>("monthly");
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleBillingPeriodChange = (
     _event: React.MouseEvent<HTMLElement>,
@@ -69,6 +73,14 @@ const Services: React.FC = () => {
   ) => {
     if (newPeriod !== null) {
       setBillingPeriod(newPeriod);
+    }
+  };
+
+  const handleBookNow = (plan: PricingPlan) => {
+    if (user) {
+      navigate("/book-now", { state: { service: plan } });
+    } else {
+      navigate("/signin");
     }
   };
 
@@ -106,7 +118,7 @@ const Services: React.FC = () => {
               lineHeight: 1.2,
             }}
           >
-            Choose From Our Lowest Plans and Prices
+            Choose From Our Service Packages
           </Typography>
 
           <ToggleButtonGroup
@@ -240,6 +252,7 @@ const Services: React.FC = () => {
                 <Button
                   variant={plan.isPopular ? "contained" : "outlined"}
                   fullWidth
+                  onClick={() => handleBookNow(plan)}
                   sx={{
                     py: 1,
                     textTransform: "none",

@@ -12,6 +12,9 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import { AuthProvider } from "./contexts/AuthContext";
 import Terms from "./components/Terms";
+import BookingForm from "./components/BookingForm";
+import BookingsDashboard from "./components/BookingsDashboard";
+import PrivateRoute from "./components/PrivateRoute";
 
 const theme = createTheme({
   typography: {
@@ -48,6 +51,22 @@ function App() {
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route
+                  path="/book-now"
+                  element={
+                    <PrivateRoute>
+                      <BookingForm />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/my-bookings"
+                  element={
+                    <PrivateRoute>
+                      <BookingsDashboard />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
             </main>
             <Footer />
