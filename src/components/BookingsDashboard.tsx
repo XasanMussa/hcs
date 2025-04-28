@@ -14,7 +14,7 @@ import {
   DialogContentText,
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../lib/supabase";
 
 interface Booking {
   id: string;
@@ -57,15 +57,26 @@ const BookingsDashboard: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "success";
+        return "info";
       case "pending":
         return "warning";
+      case "in progress":
+        return "secondary";
       case "completed":
-        return "info";
+        return "success";
       case "cancelled":
         return "error";
       default:
         return "default";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "in progress":
+        return "In Progress";
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
     }
   };
 
@@ -137,7 +148,7 @@ const BookingsDashboard: React.FC = () => {
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Chip
-                  label={booking.status}
+                  label={getStatusLabel(booking.status)}
                   color={getStatusColor(booking.status)}
                 />
                 {booking.status === "pending" && (

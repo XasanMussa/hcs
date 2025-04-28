@@ -17,7 +17,7 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const steps = ["Select Date & Time", "Payment", "Confirmation"];
@@ -95,7 +95,7 @@ const BookingForm: React.FC = () => {
           payment_phone: evcNumber,
           transaction_id: responseData.params.transactionId,
           reference_id: responseData.params.referenceId,
-          status: "confirmed",
+          status: "pending",
         };
 
         const { error: supabaseError } = await supabase

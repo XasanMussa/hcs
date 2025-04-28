@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const SignIn: React.FC = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const { signIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the redirect path from location state, or default to "/"
+  const from = location.state?.from?.pathname || "/";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,7 +21,8 @@ const SignIn: React.FC = () => {
     e.preventDefault();
     try {
       await signIn(form.email, form.password);
-      window.location.href = "/";
+      // Navigate to the intended destination
+      navigate(from, { replace: true });
     } catch (err: any) {
       setMessage(err.message || "Error signing in");
     }
@@ -24,15 +31,16 @@ const SignIn: React.FC = () => {
   return (
     <Box
       sx={{
-        width: "100vw",
-        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        minHeight: "calc(100vh - 64px)",
+        py: 4,
+        px: 2,
         background: "#f8f8f8",
       }}
     >
-      <Paper elevation={3} sx={{ p: 4, minWidth: 340, maxWidth: 400 }}>
+      <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: 400 }}>
         <Typography
           variant="h5"
           sx={{ mb: 2, fontWeight: 600, textAlign: "center" }}

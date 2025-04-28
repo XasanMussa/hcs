@@ -29,7 +29,7 @@ const useScrollToSection = () => {
 };
 
 const Navbar: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, userRole, signOut } = useAuth();
   const scrollToSection = useScrollToSection();
   const navigate = useNavigate();
 
@@ -83,14 +83,27 @@ const Navbar: React.FC = () => {
 
           {user ? (
             <>
-              <Button
-                color="inherit"
-                component={Link}
-                to="/my-bookings"
-                sx={{ color: "#333", ml: 2 }}
-              >
-                My Bookings
-              </Button>
+              {userRole === "admin" ? (
+                <>
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/admin/bookings"
+                    sx={{ color: "#333", ml: 2 }}
+                  >
+                    Dashboard
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/my-bookings"
+                  sx={{ color: "#333", ml: 2 }}
+                >
+                  My Bookings
+                </Button>
+              )}
               <Button
                 color="inherit"
                 onClick={handleSignOut}

@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline, Box } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -15,6 +15,11 @@ import Terms from "./components/Terms";
 import BookingForm from "./components/BookingForm";
 import BookingsDashboard from "./components/BookingsDashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
+import AdminLayout from "./components/admin/AdminLayout";
+import Dashboard from "./components/admin/Dashboard";
+import BookingsManagement from "./components/admin/BookingsManagement";
+import EmployeesManagement from "./components/admin/EmployeesManagement";
 
 const theme = createTheme({
   typography: {
@@ -34,42 +39,102 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div className="App">
-            <Navbar />
-            <main>
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <>
+            <Routes>
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminLayout />
+                  </AdminRoute>
+                }
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="bookings" element={<BookingsManagement />} />
+                <Route path="employees" element={<EmployeesManagement />} />
+              </Route>
+
+              {/* Public Routes */}
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Navbar />
+                    <Box component="main" sx={{ mt: "64px" }}>
                       <Hero />
                       <QualityServices />
                       <Services />
                       <Contact />
+                    </Box>
+                    <Footer />
+                  </>
+                }
+              />
+              <Route
+                path="/signin"
+                element={
+                  <>
+                    <Navbar />
+                    <Box component="main" sx={{ mt: "64px" }}>
+                      <SignIn />
+                    </Box>
+                    <Footer />
+                  </>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <>
+                    <Navbar />
+                    <Box component="main" sx={{ mt: "64px" }}>
+                      <SignUp />
+                    </Box>
+                    <Footer />
+                  </>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <>
+                    <Navbar />
+                    <Box component="main" sx={{ mt: "64px" }}>
+                      <Terms />
+                    </Box>
+                    <Footer />
+                  </>
+                }
+              />
+              <Route
+                path="/book-now"
+                element={
+                  <PrivateRoute>
+                    <>
+                      <Navbar />
+                      <Box component="main" sx={{ mt: "64px" }}>
+                        <BookingForm />
+                      </Box>
+                      <Footer />
                     </>
-                  }
-                />
-                <Route path="/signin" element={<SignIn />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route
-                  path="/book-now"
-                  element={
-                    <PrivateRoute>
-                      <BookingForm />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/my-bookings"
-                  element={
-                    <PrivateRoute>
-                      <BookingsDashboard />
-                    </PrivateRoute>
-                  }
-                />
-              </Routes>
-            </main>
-            <Footer />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-bookings"
+                element={
+                  <PrivateRoute>
+                    <>
+                      <Navbar />
+                      <Box component="main" sx={{ mt: "64px" }}>
+                        <BookingsDashboard />
+                      </Box>
+                      <Footer />
+                    </>
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
           </div>
         </ThemeProvider>
       </Router>

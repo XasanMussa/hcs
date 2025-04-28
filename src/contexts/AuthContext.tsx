@@ -1,14 +1,18 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
-
-interface User {
-  id: string;
-  email: string;
-  role: string;
-}
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { User, Session } from "@supabase/supabase-js";
+import { createProfile } from "../utils/profile";
+import { supabase } from "../lib/supabase";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 interface AuthContextType {
   user: User | null;
+  userRole: string | null;
   signUp: (
     email: string,
     password: string,
@@ -17,46 +21,109 @@ interface AuthContextType {
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthError {
+  message: string;
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const fetchUserRole = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.role || null;
+    } catch (error) {
+      console.error("Error fetching user role:", error);
+      return null;
+    }
+  }, []);
+
+  const handleAuthStateChange = useCallback(
+    async (session: Session | null) => {
+      try {
+        if (session?.user) {
+          setUser(session.user);
+          const role = await fetchUserRole(session.user.id);
+          setUserRole(role);
+        } else {
+          setUser(null);
+          setUserRole(null);
+        }
+      } catch (err) {
+        const authError = err as AuthError;
+        setError(authError.message || "Authentication error occurred");
+        console.error("Auth state change error:", err);
+      }
+    },
+    [fetchUserRole]
+  );
 
   useEffect(() => {
-    (async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session && session.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email || "",
-          role: "customer",
-        });
-      } else {
-        setUser(null);
+    let mounted = true;
+
+    const initialize = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Get the initial session
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+
+        if (mounted) {
+          await handleAuthStateChange(session);
+          setIsInitialized(true);
+        }
+      } catch (err) {
+        const authError = err as AuthError;
+        if (mounted) {
+          setError(authError.message || "Failed to initialize authentication");
+          console.error("Auth initialization error:", err);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-    })();
-    // Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        const user = session?.user;
-        setUser(
-          user
-            ? { id: user.id, email: user.email || "", role: "customer" }
-            : null
-        );
-      }
-    );
-    return () => {
-      listener?.subscription.unsubscribe();
     };
-  }, []);
+
+    // Set up auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (mounted && isInitialized) {
+        await handleAuthStateChange(session);
+      }
+    });
+
+    initialize();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [handleAuthStateChange, isInitialized]);
 
   const signUp = async (
     email: string,
@@ -64,37 +131,119 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     username: string,
     phone: string
   ) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    // Create profile
-    if (data.user) {
-      await supabase
-        .from("profiles")
-        .insert([{ id: data.user.id, username, phone }]);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      if (!user) throw new Error("User creation failed");
+
+      await createProfile({
+        id: user.id,
+        username,
+        phone,
+      });
+    } catch (err) {
+      const authError = err as AuthError;
+      setError(authError.message || "Sign up failed");
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+    } catch (err) {
+      const authError = err as AuthError;
+      setError(authError.message || "Sign in failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setUser(null);
+      setUserRole(null);
+    } catch (err) {
+      const authError = err as AuthError;
+      setError(authError.message || "Sign out failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Only show loading screen during initial load
+  if (loading && !isInitialized) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        bgcolor="#fff"
+      >
+        <CircularProgress />
+        <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        bgcolor="#fff"
+      >
+        <Typography color="error">
+          Authentication Error: {error}. Please refresh the page.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        userRole,
         signUp,
         signIn,
         signOut,
-        isAuthenticated: !!user,
+        loading,
+        error,
       }}
     >
       {children}

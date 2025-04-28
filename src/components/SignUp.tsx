@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import SignupSuccess from "./SignupSuccess";
 
 const SignUp: React.FC = () => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -35,11 +37,15 @@ const SignUp: React.FC = () => {
     }
     try {
       await signUp(form.email, form.password, form.username, form.phone);
-      setMessage("Check your email for confirmation!");
+      setIsSuccess(true);
     } catch (err: any) {
       setMessage(err.message || "Error signing up");
     }
   };
+
+  if (isSuccess) {
+    return <SignupSuccess />;
+  }
 
   return (
     <Box
