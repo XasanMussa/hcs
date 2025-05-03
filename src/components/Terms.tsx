@@ -59,11 +59,28 @@ const Terms: React.FC = () => {
           </Typography>
 
           <Typography variant="h6" sx={{ color: "#333", mt: 4, mb: 2 }}>
-            5. Payment Terms
+            5. Payment Terms and Refund Policy
           </Typography>
           <Typography variant="body1" paragraph sx={{ color: "#666" }}>
-            Payment is required at the time of booking. We accept various
-            payment methods including credit cards and mobile payments.
+            Payment is required at the time of booking. We accept only mobile
+            payments.
+            <br />
+            <br />
+            <strong>No Refund Policy:</strong>
+            <br />
+            • All payments made for our services are non-refundable
+            <br />
+            • Once a service has been scheduled and payment processed, no
+            refunds will be issued
+            <br />
+            • In case of service cancellation by the customer, the payment will
+            be retained as a cancellation fee
+            <br />
+            • If greenClean is unable to provide the service due to
+            circumstances within our control, we may offer service rescheduling
+            or credit for future services
+            <br />• Disputes regarding service quality should be reported within
+            24 hours of service completion for review
           </Typography>
 
           <Typography variant="h6" sx={{ color: "#333", mt: 4, mb: 2 }}>

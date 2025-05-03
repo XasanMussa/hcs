@@ -84,16 +84,23 @@ const Navbar: React.FC = () => {
           {user ? (
             <>
               {userRole === "admin" ? (
-                <>
-                  <Button
-                    color="inherit"
-                    component={Link}
-                    to="/admin/bookings"
-                    sx={{ color: "#333", ml: 2 }}
-                  >
-                    Dashboard
-                  </Button>
-                </>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/admin/bookings"
+                  sx={{ color: "#333", ml: 2 }}
+                >
+                  Dashboard
+                </Button>
+              ) : userRole === "employee" ? (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/employee/tasks"
+                  sx={{ color: "#333", ml: 2 }}
+                >
+                  My Tasks
+                </Button>
               ) : (
                 <Button
                   color="inherit"

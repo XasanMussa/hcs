@@ -24,6 +24,8 @@ interface Booking {
   service_type: string;
   price: number;
   created_at: string;
+  location: string;
+  notes?: string;
 }
 
 const BookingsDashboard: React.FC = () => {
@@ -142,6 +144,14 @@ const BookingsDashboard: React.FC = () => {
                 <Typography variant="body2" color="text.secondary">
                   Time: {booking.time}
                 </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Location: {booking.location}
+                </Typography>
+                {booking.notes && (
+                  <Typography variant="body2" color="text.secondary">
+                    Notes: {booking.notes}
+                  </Typography>
+                )}
                 <Typography variant="body2" color="text.secondary">
                   Price: ${booking.price}
                 </Typography>

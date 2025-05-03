@@ -33,6 +33,8 @@ const BookingForm: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+  const [bookingLocation, setBookingLocation] = useState("");
+  const [notes, setNotes] = useState("");
   const [evcNumber, setEvcNumber] = useState("");
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
@@ -96,6 +98,8 @@ const BookingForm: React.FC = () => {
           transaction_id: responseData.params.transactionId,
           reference_id: responseData.params.referenceId,
           status: "pending",
+          location: bookingLocation,
+          notes: notes,
         };
 
         const { error: supabaseError } = await supabase
@@ -125,6 +129,10 @@ const BookingForm: React.FC = () => {
     if (activeStep === 0) {
       if (!selectedDate || !selectedTime) {
         setError("Please select both date and time");
+        return;
+      }
+      if (!bookingLocation.trim()) {
+        setError("Please enter the service location");
         return;
       }
     }
@@ -171,6 +179,24 @@ const BookingForm: React.FC = () => {
               onChange={(newValue) => setSelectedTime(newValue)}
               sx={{ mb: 3, width: "100%" }}
             />
+            <TextField
+              fullWidth
+              label="Service Location"
+              value={bookingLocation}
+              onChange={(e) => setBookingLocation(e.target.value)}
+              placeholder="Enter the address for the service"
+              required
+              sx={{ mb: 3 }}
+            />
+            <TextField
+              fullWidth
+              label="Additional Notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Any special instructions or requirements"
+              multiline
+              rows={4}
+            />
           </Box>
         );
       case 1:
@@ -211,6 +237,14 @@ const BookingForm: React.FC = () => {
                 minute: "2-digit",
               })}
               <br />
+              Location: {bookingLocation}
+              <br />
+              {notes && (
+                <>
+                  Notes: {notes}
+                  <br />
+                </>
+              )}
               EVC Number: {evcNumber}
             </Typography>
           </Box>
@@ -254,7 +288,11 @@ const BookingForm: React.FC = () => {
 
           {success && (
             <Alert severity="success" sx={{ mb: 2 }}>
-              Payment successful! Booking confirmed. Redirecting to dashboard...
+              Your payment has been successfully processed! Your booking is
+              confirmed, and we're already working on it. Rest assured, we'll
+              complete your request as quickly and efficiently as possible.
+              You’ll be redirected to your dashboard shortly. Thank you for
+              choosing us!{" "}
             </Alert>
           )}
 

@@ -16,10 +16,13 @@ import BookingForm from "./components/BookingForm";
 import BookingsDashboard from "./components/BookingsDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
+import EmployeeRoute from "./components/EmployeeRoute";
 import AdminLayout from "./components/admin/AdminLayout";
+import EmployeeLayout from "./components/employee/EmployeeLayout";
 import Dashboard from "./components/admin/Dashboard";
 import BookingsManagement from "./components/admin/BookingsManagement";
 import EmployeesManagement from "./components/admin/EmployeesManagement";
+import TaskManagement from "./components/employee/TaskManagement";
 
 const theme = createTheme({
   typography: {
@@ -52,6 +55,18 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="bookings" element={<BookingsManagement />} />
                 <Route path="employees" element={<EmployeesManagement />} />
+              </Route>
+
+              {/* Employee Routes */}
+              <Route
+                path="/employee"
+                element={
+                  <EmployeeRoute>
+                    <EmployeeLayout />
+                  </EmployeeRoute>
+                }
+              >
+                <Route path="tasks" element={<TaskManagement />} />
               </Route>
 
               {/* Public Routes */}

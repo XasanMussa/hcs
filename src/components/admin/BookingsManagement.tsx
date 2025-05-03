@@ -44,6 +44,8 @@ interface Booking {
     id: string;
     username: string;
   };
+  location: string;
+  notes?: string;
 }
 
 interface Employee {
@@ -204,6 +206,7 @@ const BookingsManagement: React.FC = () => {
               <TableCell>Date</TableCell>
               <TableCell>Time</TableCell>
               <TableCell>Service</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Payment</TableCell>
@@ -225,12 +228,23 @@ const BookingsManagement: React.FC = () => {
                   >
                     {booking.customer?.phone || "No phone"}
                   </Typography>
+                  {booking.notes && (
+                    <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      display="block"
+                      sx={{ mt: 1, fontStyle: "italic" }}
+                    >
+                      Note: {booking.notes}
+                    </Typography>
+                  )}
                 </TableCell>
                 <TableCell>
                   {new Date(booking.date).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{booking.time}</TableCell>
                 <TableCell>{booking.service_type}</TableCell>
+                <TableCell>{booking.location}</TableCell>
                 <TableCell>${booking.payment_amount}</TableCell>
                 <TableCell>
                   <Chip
